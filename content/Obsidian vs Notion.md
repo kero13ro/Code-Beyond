@@ -1,3 +1,9 @@
+---
+title: "Obsidian vs Notion"
+description: "Obsidian"
+tags:
+  - productivity
+---
 As a notion addict for five years, I recently decided to migrate to Obsidian.
 
 ![[Pasted image 20250923193329.png]]
