@@ -1,13 +1,14 @@
-# Obsidian vs Notion: A Migration Guide
+As a notion addict for five years, I recently decided to migrate to Obsidian.
+
+![[Pasted image 20250923193329.png]]
 
 ## The Turning Point
 
-After using Notion for collaborative work and content creation, several factors have prompted a reevaluation of my workflow:
-
-- **Cost Escalation**: Notion AI requires a monthly subscription of $600, with basic plan at $10/month
+Several factors have prompted a reevaluation of my workflow:
 - **Storage Limitations**: Notion free tier only provides 5MB upload space, forcing paid subscriptions
+- **Cost Escalation**: Notion AI requires a monthly subscription of $20, with basic plan at $10/month
 - **Enhanced Alternatives**: Claude Code now provides comprehensive markdown editing capabilities
-- **Storage Economics**: iCloud offers 5GB storage for $30/month, sufficient for photos and documents
+- **Storage Economics**: iCloud offers 5GB storage for $30/month, sufficient for Obsidian
 - **Feature Overhead**: Notion's collaborative features are underutilized for solo writing tasks
 - **Editor Philosophy**: Obsidian positions itself as a code editor for notes, offering superior customization
 
@@ -41,14 +42,13 @@ After using Notion for collaborative work and content creation, several factors 
 
 ## Cost Analysis
 
-| Service | Monthly Cost | Annual Cost | Features |
-|---------|-------------|-------------|----------|
-| Notion Basic | $10 | $120 | Basic features, limited storage |
-| Notion AI | $600 | $7,200 | AI assistance, collaboration |
-| iCloud 5GB | $30 | $360 | Storage, photo backup |
-| Obsidian | $0-$96 | $0-$1,152 | Note-taking, optional sync |
-
-**Potential Savings**: $6,000+ annually (AI plan) or $100+ annually (basic plan) by switching to Obsidian + iCloud
+| Service      | Monthly Cost | Annual Cost | Features                                                      |
+| ------------ | ------------ | ----------- | ------------------------------------------------------------ |
+| Notion Basic | $10          | $120        | Basic features, limited stora                                 |
+| Notion AI    | $20          | $240        | AI assistance, collaborat                                     |
+| iCloud 5GB   | $1           | $12         | Storage, photo ba                                             |
+| Claude       | $16          | $200        | Use terminal to edit any file, mark                           |
+| Obsidian     | $0           | $0      Use iCloud or Github to Sync<br>Use Claude for AI generation or AI  |
 
 ## Conclusion
 
