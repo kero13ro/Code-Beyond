@@ -1,0 +1,57 @@
+# Obsidian vs Notion: A Migration Guide
+
+## The Turning Point
+
+After using Notion for collaborative work and content creation, several factors have prompted a reevaluation of my workflow:
+
+- **Cost Escalation**: Notion AI requires a monthly subscription of $600, with basic plan at $10/month
+- **Storage Limitations**: Notion free tier only provides 5MB upload space, forcing paid subscriptions
+- **Enhanced Alternatives**: Claude Code now provides comprehensive markdown editing capabilities
+- **Storage Economics**: iCloud offers 5GB storage for $30/month, sufficient for photos and documents
+- **Feature Overhead**: Notion's collaborative features are underutilized for solo writing tasks
+- **Editor Philosophy**: Obsidian positions itself as a code editor for notes, offering superior customization
+
+## Obsidian vs Notion: Key Differences
+
+### Obsidian Advantages
+- **Editor-centric Design**: Functions like a programmer's IDE with extensive customization
+- **Keyboard-first Workflow**: Complete mouse-free operation possible
+- **Local Storage**: Files stored locally with optional cloud sync
+- **Cost Efficiency**: Free core features with optional paid sync
+- **Markdown Native**: Pure markdown files, ensuring portability
+
+### Notion Advantages
+- **Collaboration**: Superior team features and real-time editing
+- **Database Integration**: Powerful relational database capabilities
+- **All-in-one Platform**: Combines notes, tasks, databases, and wikis
+- **Rich Media**: Advanced embedding and media handling
+- **Templates**: Extensive template ecosystem
+
+## Technical Considerations
+
+### Storage & Sync
+- iCloud provides reliable sync across Apple devices
+- Local storage ensures access without internet dependency
+- GitHub integration enables version control for important documents
+
+### Workflow Integration
+- Claude Code compatibility ensures seamless AI-assisted editing
+- Obsidian's plugin ecosystem allows extensive customization
+- Keyboard shortcuts reduce reliance on mouse interaction
+
+## Cost Analysis
+
+| Service | Monthly Cost | Annual Cost | Features |
+|---------|-------------|-------------|----------|
+| Notion Basic | $10 | $120 | Basic features, limited storage |
+| Notion AI | $600 | $7,200 | AI assistance, collaboration |
+| iCloud 5GB | $30 | $360 | Storage, photo backup |
+| Obsidian | $0-$96 | $0-$1,152 | Note-taking, optional sync |
+
+**Potential Savings**: $6,000+ annually (AI plan) or $100+ annually (basic plan) by switching to Obsidian + iCloud
+
+## Conclusion
+
+The migration from Notion to Obsidian represents a shift from a collaboration-focused platform to a writing-optimized environment. For solo content creators who value keyboard efficiency, local storage, and cost effectiveness, Obsidian provides a compelling alternative. The gradual migration approach allows for thorough testing while maintaining workflow continuity.
+
+The key success factors include proper vault setup via mobile device, comprehensive backup strategies, and leveraging the Obsidian-Claude Code integration for enhanced productivity.
