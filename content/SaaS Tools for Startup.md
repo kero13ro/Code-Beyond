@@ -67,7 +67,6 @@ Here are the battle-tested SaaS tools I recommend, organized by each stage of th
 ### Maintenance & Monitoring
 
 **Cross-Platform & Monitoring**
-- **[Capacitor](https://capacitorjs.com/)** - Cross-platform app development and testing
 - **Sentry** - Error tracking and performance monitoring
 - **DataDog** - Full-stack monitoring and debugging platform
 
