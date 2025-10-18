@@ -75,7 +75,7 @@ Create user stories, define acceptance criteria, prioritize backlog.
 
 ### 2. Refinement
 Review items, assess feasibility, estimate effort, verify Definition of Ready.
-*See [Refinement Process](2-2%20Refinement%20Process.md) for details*
+*See [Refinement Process](blog/How%20to%20build%20Software/2-2%20Refinement%20Process.md) for details*
 
 ### 3. Architecture Design
 Design system architecture, select tech stack, define requirements.
