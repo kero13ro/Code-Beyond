@@ -47,7 +47,7 @@ Product Owner creates user stories with:
 - Description and acceptance criteria
 - Priority and labels
 - Estimated Story Points
-*See [Refinement Process](blog/How%20to%20build%20Software/2-2%20Refinement%20Process.md) for estimation details*
+*See [Refinement Process](blog/Software%20development%20process/2-2%20Refinement%20Process.md) for estimation details*
 
 ### 2. Sprint Planning
 **Duration**: 2-4 hours

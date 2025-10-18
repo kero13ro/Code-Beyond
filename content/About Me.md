@@ -15,19 +15,20 @@ What drives me is the thrill of technical challenges and exploring diverse domai
 
 I love building things that solve everyday problems. Here are some projects I've worked on:
 
-**Browser Extensions**
+**Browser Extensions & Web Applications**
 - [YouTube PDF to AI Assistant](https://chromewebstore.google.com/detail/youtube-pdf-to-ai-assista/aoladgbnahppfdlneiocoapeikgflgmm) - Extract key insights from YouTube videos
 - [PDF to AI Assistant](https://chromewebstore.google.com/detail/pdf-to-ai-assistant-%E5%BF%AB%E9%80%9F%E6%89%93%E9%96%8B/ngknkcnhfkfjhbajoeoekiefmhnjjlpl) - Quick tools for exam preparation
-
-**Web Applications**
 - [National Exam Search Tool & Forum](https://jump-note-jbnyh3q72-kero13s-projects.vercel.app/) - Helping students find and discuss exam materials
 - [Google Sheets POS System](https://kero13ro.github.io/pos-gin/) - A point-of-sale system integrated with Google Sheets
-- OCR Vocabulary Cards - Screenshot English words and create flashcards for review
 
 **Open Source Contributions**
 - [Paste as Plain Text](https://www.raycast.com/koinzhang/paste-as-plain-text) - Raycast extension for pasting text from the clipboard as any format
 - [GitHub Profile](https://www.raycast.com/ViGeng/github-profile) - View GitHub profiles directly in Raycast
 
+**個人使用的小工具**
+-  [OCR Vocabulary Cards](https://mini-flash-card.vercel.app/) - A Raycast extension, screenshotting English words and create flashcards for review
+- Raycast 指令：可以快速將 markdown 文件，部署到 Blog 上
+- 提供部門使用的小工具和指令，將 excel 呼叫指令可以快速登入系統
 
 ### Professional Experience
 
