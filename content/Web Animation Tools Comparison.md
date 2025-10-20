@@ -1,7 +1,4 @@
----
-title: "Web Animation Tools Comparison: Lottie vs Rive vs Spline vs Spine"
----
-
+# Web Animation Tools Comparison: Lottie vs Rive vs Spline vs Spine
 
 ## Why Animation Tools Matter
 

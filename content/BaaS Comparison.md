@@ -1,6 +1,4 @@
----
-title: "BaaS Comparison: Firebase vs Amplify vs Supabase vs Pocketbase"
----
+# BaaS Comparison: Firebase vs Amplify vs Supabase vs Pocketbase
 
 ## What is BaaS?
 
@@ -8,13 +6,13 @@ BaaS (Backend as a Service) dramatically simplifies backend development and depl
 
 ## Quick Comparison
 
-| Feature            | Firebase          | AWS Amplify      | Supabase          | Pocketbase   |
-| ------------------ | ----------------- | ---------------- | ----------------- | ------------ |
-| **Provider**       | Google            | Amazon (AWS)     | Open Source       | Open Source  |
-| **Database**       | Firestore (NoSQL) | DynamoDB (NoSQL) | PostgreSQL (SQL)  | SQLite (SQL) |
-| **Open Source**    | ❌                 | ❌                | ✅                 | ✅            |
-| **Deployment**     | Cloud             | Cloud            | Cloud/Self-hosted | Self-hosted  |
-| **Learning Curve** | Medium            | Steep            | Easy              | Very Easy    |
+| Feature | Firebase | AWS Amplify | Supabase | Pocketbase |
+|---------|----------|-------------|----------|------------|
+| **Provider** | Google | Amazon (AWS) | Open Source | Open Source |
+| **Database** | Firestore (NoSQL) | DynamoDB (NoSQL) | PostgreSQL (SQL) | SQLite (SQL) |
+| **Open Source** | ❌ | ❌ | ✅ | ✅ |
+| **Deployment** | Cloud | Cloud | Cloud/Self-hosted | Self-hosted |
+| **Learning Curve** | Medium | Steep | Easy | Very Easy |
 
 ## AWS Amplify
 
