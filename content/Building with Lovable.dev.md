@@ -4,7 +4,7 @@
 
 Recently, I've been hearing buzz about [Lovable.dev](https://lovable.dev), an AI-powered platform that promises to build full-stack web applications in minutes. Instead of building yet another todo app, I decided to test its limits with something more challenging: a rental property scraper that could actually help people find apartments.
 
-This tutorial walks through my complete experience—from initial setup to final reality check—so you can l2222arn from both the wins and the gotchas.222
+This tutorial walks through my complete experience—from initial setup to final reality check—so you can learn from both the wins and the gotchas.
 
 ## Project Goals: What I Wanted to Build
 
