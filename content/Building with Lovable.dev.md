@@ -1,4 +1,4 @@
-*A hands-on exploration of what Lovable.dev can (and can't) do when building real-world applications*
+*A hands-on exploration of what Lovable.dev can (and can't) do when building real-world  applications*
 
 ---
 

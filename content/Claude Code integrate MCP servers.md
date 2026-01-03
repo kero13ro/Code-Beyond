@@ -60,6 +60,9 @@ Ticket creation and queries work smoothly. Similar token permission concerns as 
 **Interesting use case I'm exploring:** Automated documentation updates. When code changes, could we automatically update related Confluence pages? The integration is there; the workflow patterns need refinement.
 
 ## Configuration
+```bash
+claude mcp add chrome-devtools npx chrome-devtools-mcp@latest
+```
 
 ```json
 {
@@ -194,3 +197,29 @@ I'm particularly curious about:
 ---
 
 *These notes are evolving as I experiment further. If you're exploring MCP, I'd be interested in comparing notes.*
+
+
+
+
+目前 下載的檔案有共同科目
+  作文、英文及中華民國憲法
+
+
+
+  使用方式：
+
+  # 1. 設定 .env
+  CATEGORIES=都市計畫,會計
+
+  # 2. OCR 處理
+  python phase3/scripts/ocr_pdf.py --auto
+
+  # 3. 解析考卷
+  python phase3/scripts/parse_exam.py
+
+  # 4. 建立 chunks
+  python phase4/scripts/create_chunks.py
+
+  # 5. 建立 embeddings
+  python phase4/scripts/create_embeddings.py
+
