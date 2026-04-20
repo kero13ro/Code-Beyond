@@ -1,161 +1,164 @@
-### What is Website Performance Optimization?
+---
+title: "用 Chrome MCP 優化網站效能"
+description: "以 Chrome MCP 進行實際效能分析的案例研究——LCP 拆解、圖片優化，以及第三方腳本稽核的可量化結果"
+tags:
+  - performance
+  - tools
+---
 
-Website performance optimization can be examined at three distinct levels:
-#### Level 1: Strategic Assessment
-- Ask if features are necessary
-- Communicate hidden costs and trade-offs to stakeholders
-- Prevent feature bloat that kills performance
-- **Key insight:** Not every feature makes the product better; some make it slower and harder to maintain
+### 網站效能優化是什麼？
 
-#### Level 2: Architectural Decisions
-- Choose the right rendering strategy (SSG, SSR, CSR) based on product type
-- Plan for caching at multiple layers (CDN, Redis, server-side)
-- Deploy to appropriate regions to minimize latency
-- Decide on component sharing, monorepo structure, build caching
-- **Key insight:** Architectural decisions multiply across all downstream work—they have exponential impact
+網站效能優化有三個層次：
 
-#### Level 3: Technical Implementation
-- Optimize individual code paths, reduce JavaScript bundle size
-- Minimize layout thrashing and forced reflows
-- Implement efficient asset delivery and compression
-- Optimize rendering and execution performance
+#### 第一層：策略評估
+- 評估功能是否真有必要
+- 向利害關係人溝通隱性成本與取捨
+- 防止功能膨脹侵蝕效能
+- **核心觀點：** 不是每個功能都讓產品更好；有些只會讓它更慢、更難維護
 
-For deeper insights, refer to [[What Excellent Product Developers Know]] and [[How to Optimize Website Performance]].
+#### 第二層：架構決策
+- 根據產品類型選擇合適的渲染策略（SSG、SSR、CSR）
+- 規劃多層快取（CDN、Redis、伺服器端）
+- 選擇部署區域以降低延遲
+- 決定元件共用、monorepo 結構、build 快取策略
+- **核心觀點：** 架構決策會乘數放大到所有後續工作，影響是指數級的
 
-This article focuses on using Chrome MCP to demonstrate practical performance optimization techniques at Level 3 and their measurable impact.
+#### 第三層：技術實作
+- 優化個別程式碼路徑、縮減 JavaScript bundle 大小
+- 消除 layout thrashing 與強制 reflow
+- 實作高效率的資源傳輸與壓縮
+- 優化渲染與執行效能
 
-### What is Chrome MCP?
+更深入的背景可參考 [[What Excellent Product Developers Know]] 與 [[How to Optimize Website Performance]]。
 
-Chrome MCP (Model Context Protocol) is a powerful debugging tool that integrates with Claude Code to provide detailed performance analysis and insights. It allows developers to:
+本文聚焦於使用 Chrome MCP 示範第三層的實際優化技術，並呈現可量化的改善幅度。
 
-- Capture comprehensive performance traces with Core Web Vitals data
-- Analyze resource loading waterfalls and dependency chains
-- Identify bottlenecks in the critical rendering path
-- Get actionable recommendations for performance improvements
-- Measure the impact of optimizations in real-time
+### 什麼是 Chrome MCP？
 
-By combining Chrome DevTools data with AI-powered analysis, Chrome MCP makes performance debugging more accessible and efficient.
+Chrome MCP（Model Context Protocol）是整合進 Claude Code 的強大除錯工具，提供詳細的效能分析與洞察。它能夠：
 
-### Case Study: Analyzing Appier.com
+- 擷取含 Core Web Vitals 資料的完整效能追蹤
+- 分析資源載入瀑布圖與依賴鏈
+- 找出關鍵渲染路徑的瓶頸
+- 提供具體可行的效能改善建議
+- 即時量測優化效果
 
-Recently, I investigated [Appier](https://www.appier.com/en/)
-Despite its prominence, the site has room for performance improvement.
+Chrome MCP 將 Chrome DevTools 直接連接至 AI 分析——得到的是根本原因，而不只是 Lighthouse 分數。
 
-#### Interactive Performance Issue
-When rapidly hovering over menu items in the top navigation bar, users experience approximately 500ms of delay in hover response. This is a telltale sign of forced reflows and layout thrashing—a classic performance anti-pattern discussed in [Optimize Browser Reflow & Repaint].
+### 案例研究：分析 Appier.com
 
-**Asset Size Analysis:**
-The initial page load requires 120 MB of resources—an enormous size that immediately signals optimization opportunities. The primary culprit: GIF files at 2400 × 1350 resolution.
+我透過分析 [Appier](https://www.appier.com/en/) 來示範 Chrome MCP 稽核的實際樣貌。
 
-By converting these GIFs to AVIF format, file sizes drop to **21 MB**
-Further optimization comes from applying responsive image principles—using 1200px resolution instead of 2400px reduces the total to just **2.9 MB**!
+#### 互動效能問題
+快速在頂部導覽列的選單項目間 hover 時，使用者會感受到約 500ms 的延遲。這是 forced reflow 與 layout thrashing 的典型症狀——詳細說明見 [Optimize Browser Reflow & Repaint]。
 
-Total page size reduced from 120 MB to approximately 50 MB—a 58% reduction that doubles download and rendering speed.
+**資源大小分析：**
+初始頁面載入需要 120 MB 的資源——這個數字本身就是優化機會的訊號。主要問題是 2400 × 1350 解析度的 GIF 檔案。
+
+將這些 GIF 轉換為 AVIF 格式後，檔案大小降至 **21 MB**。
+再套用響應式圖片原則，使用 1200px 解析度取代 2400px，總量進一步降至 **2.9 MB**。
+
+頁面總大小從 120 MB 降至約 50 MB——減少 58%，下載與渲染速度提升一倍。
 ![[Pasted image 20251108162150.png]]
 
 
-### Core Performance Metrics
+### Core Web Vitals 指標
 
-Rather than relying solely on traditional Lighthouse audits, we use Chrome MCP and Claude Code to directly investigate the root causes of these performance issues.
+我們不依賴傳統的 Lighthouse 稽核，而是直接用 Chrome MCP 與 Claude Code 深入調查這些效能問題的根本原因。
 
-| Metric                         | Value    | Status               |
+| 指標 | 數值 | 狀態 |
 | ------------------------------ | -------- | -------------------- |
-| LCP (Largest Contentful Paint) | 1,288 ms | ⚠️ Needs Improvement |
-| CLS (Cumulative Layout Shift)  | 0.00     | ✅ Excellent          |
-| TTFB (Time to First Byte)      | 36 ms    | ✅ Excellent          |
-| Critical Path Delay            | 609 ms   | ⚠️ Excessive         |
+| LCP（Largest Contentful Paint）| 1,288 ms | ⚠️ 需要改善 |
+| CLS（Cumulative Layout Shift） | 0.00 | ✅ 優秀 |
+| TTFB（Time to First Byte） | 36 ms | ✅ 優秀 |
+| 關鍵路徑延遲 | 609 ms | ⚠️ 過長 |
 
-#### Key Performance Issues Discovered
+#### 發現的主要效能問題
 
-**1. LCP Element Loading Delay (1,288 ms)**
+**1. LCP 元素載入延遲（1,288 ms）**
 
-The Largest Contentful Paint element is a video file (Header_EN_0909.mp4 - 3.2 MB) with a three-part delay breakdown:
+LCP 元素是一個影片檔（Header_EN_0909.mp4，3.2 MB），延遲分為三部分：
 
-- **Load Delay: 473 ms (36.7%)** - Time spent discovering and requesting the resource
-- **Render Delay: 524 ms (40.7%)** - Waiting time before rendering begins (the longest contributor)
-- **Load Duration: 256 ms (19.9%)** - Actual download time for the resource
+- **Load Delay：473 ms（36.7%）** — 發現並請求資源所花的時間
+- **Render Delay：524 ms（40.7%）** — 渲染開始前的等待時間（延遲最大的來源）
+- **Load Duration：256 ms（19.9%）** — 資源實際下載時間
 
-**Optimization Recommendations:**
-- ❌ Missing `fetchpriority="high"` attribute - should be added immediately
-- Replace the video with an optimized static image (videos have higher loading overhead)
-- Reduce the video file size from 3.2 MB to under 500 KB
-- **Expected improvement: 200-300 ms reduction**
+**How to fix LCP：**
+- ❌ 缺少 `fetchpriority="high"` 屬性——應立即加上
+- 將影片替換為優化過的靜態圖片（影片的載入開銷更高）
+- 將影片從 3.2 MB 壓縮至 500 KB 以內
+- **預期改善：減少 200–300 ms**
 
-**2. Third-Party Script Overhead (288 kB + 159 ms Main Thread Time)**
+**2. 第三方腳本開銷（288 kB + 159 ms 主執行緒時間）**
 
-The site loads several third-party dependencies:
+網站載入了多個第三方依賴：
 
-- **Unpkg (Swiper):** 151.5 kB + 114 ms main thread time ⚠️ Most problematic
-- **HubSpot:** 108.3 kB + 42 ms main thread time
-- **Google Fonts:** 79.5 kB
-- **YouTube Embed:** 31 kB + 3 ms
+- **Unpkg（Swiper）：** 151.5 kB + 114 ms 主執行緒時間 ⚠️ 問題最嚴重
+- **HubSpot：** 108.3 kB + 42 ms 主執行緒時間
+- **Google Fonts：** 79.5 kB
+- **YouTube Embed：** 31 kB + 3 ms
 
-**Optimization Recommendations:**
-- Defer HubSpot script loading (non-critical path)
-- Self-host Swiper library instead of loading from Unpkg CDN
-- Use `font-display: swap` for Google Fonts to prevent render blocking
-- **Expected improvement: 100-150 ms total**
+**How to fix third-party scripts：**
+- 延遲載入 HubSpot 腳本（非關鍵路徑）
+- 自行托管 Swiper，不從 Unpkg CDN 載入
+- Google Fonts 加上 `font-display: swap`，防止阻塞渲染
+- **預期改善：總計減少 100–150 ms**
 
-**3. Long Critical Path Chain (609 ms)**
+**3. 過長的關鍵路徑鏈（609 ms）**
 
-The dependency chain is problematic:
+依賴鏈問題如下：
 
 ```
 Index HTML (140 ms) →
   template_global.min.js (609 ms) →
-    Other JS files (serialized loading)
+    其他 JS 檔案（序列載入）
 ```
 
-All JavaScript files are loaded serially rather than in parallel, creating an unnecessarily long critical path.
+所有 JavaScript 檔案序列載入而非平行載入，造成不必要的長關鍵路徑。
 
-**Optimization Recommendations:**
-- Break JavaScript into smaller chunks that can load in parallel
-- Add `<link rel="preload">` for critical resources
-- Implement `preconnect` for CDN resources
-- **Expected improvement: 150-200 ms reduction**
+**How to fix the critical path：**
+- 將 JavaScript 拆分為可平行載入的小 chunk
+- 為關鍵資源加上 `<link rel="preload">`
+- 為 CDN 資源實作 `preconnect`
+- **預期改善：減少 150–200 ms**
 
-**4. Forced Reflow Issues**
+**4. Forced Reflow 問題**
 
-`template_global.min.js` causes 21 ms of forced reflows, with a total reflow time of 46 ms. This aligns with the navigation menu hover delay observed earlier.
+`template_global.min.js` 造成 21 ms 的 forced reflow，總 reflow 時間 46 ms。這與前面觀察到的導覽選單 hover 延遲直接對應。
 
-**Optimization Recommendations:**
-- Audit DOM query patterns in `template_global.js`
-- Avoid reading layout properties immediately after DOM modifications
-- Use `requestAnimationFrame` to batch layout updates
-- **Expected improvement: 20-30 ms reduction**
+**How to fix forced reflows：**
+- 稽核 `template_global.js` 中的 DOM 查詢模式
+- 避免在 DOM 修改後立即讀取 layout 屬性
+- 使用 `requestAnimationFrame` 批次處理 layout 更新
+- **預期改善：減少 20–30 ms**
 
-#### Optimization Priority Framework
+#### 優化優先順序
 
-**Priority 1 - Immediate Actions**
-1. Add `fetchpriority="high"` to LCP video
-2. Defer non-critical third-party scripts (HubSpot)
-3. Replace 3.2 MB video with optimized image
+**優先級 1（立即執行）**
+1. 為 LCP 影片加上 `fetchpriority="high"`
+2. 延遲非關鍵第三方腳本（HubSpot）
+3. 將 3.2 MB 影片替換為優化圖片
 
-**Priority 2 - Short-Term Improvements**
-1. Break JavaScript dependency chain into parallel loads
-2. Fix forced reflows in `template_global.js`
-3. Self-host Swiper library
+**優先級 2（短期改善）**
+1. 將 JavaScript 依賴鏈改為平行載入
+2. 修復 `template_global.js` 中的 forced reflow
+3. 自行托管 Swiper
 
-**Priority 3 - Long-Term Strategy**
-1. Implement aggressive code splitting
-2. Migrate from HubSpot-generated template
+**優先級 3（長期策略）**
+1. 實作積極的 code splitting
+2. 遷離 HubSpot 生成的模板
 
-#### Expected Results
-By implementing Priority 1 and 2 optimizations:
-- **LCP:** 1,288 ms → ~800-900 ms (30-40% improvement)
-- **Critical Path:** 609 ms → ~450-500 ms
-- **Overall User Experience:** Significantly faster content visibility
+#### 預期成果
+完成優先級 1 與 2 的優化後：
+- **LCP：** 1,288 ms → 約 800–900 ms（改善 30–40%）
+- **關鍵路徑：** 609 ms → 約 450–500 ms
+- **整體使用者體驗：** 內容可見速度明顯提升
 
-#### Current Strengths
-Despite these issues, Appier.com has several positive aspects:
-- ✅ Excellent TTFB (36 ms)
-- ✅ Perfect CLS (0.00 - no layout shifts)
-- ✅ Pre-configured preconnect to Google Fonts
-- ✅ Well-configured CDN (CloudFront + Cloudflare)
+#### 現有優勢
+儘管有上述問題，Appier.com 也有幾個值得肯定之處：
+- ✅ TTFB 極佳（36 ms）
+- ✅ CLS 完美（0.00，無版面位移）
+- ✅ 已預設 preconnect 至 Google Fonts
+- ✅ CDN 配置完善（CloudFront + Cloudflare）
 
-### Conclusion
-
-Using Chrome MCP and Claude Code, we can systematically identify performance bottlenecks and prioritize optimizations by their impact. Even for well-established companies, there are often significant opportunities to improve user experience through data-driven performance analysis.
-
-
-
+即使是成熟的公司，也常留下可觀的效能空間沒有利用。Chrome MCP 讓你能在一個下午找到並量化這些機會，而不是花整個 sprint。

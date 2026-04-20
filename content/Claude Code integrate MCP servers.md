@@ -1,65 +1,73 @@
-# Exploring Claude Code + MCP Servers Integration
+---
+title: "Claude Code 整合 MCP Servers 實測紀錄"
+description: "實際測試 Chrome DevTools、Figma、GitHub 與 Atlassian 的 MCP 整合：哪些能用、哪些會壞、哪些有潛力"
+tags:
+  - tools
+  - architecture
+---
 
-Recently experimented with integrating MCP (Model Context Protocol) servers into Claude Code. These are my exploration notes on what works, what doesn't, and what might be possible.
+# Claude Code 整合 MCP Servers 實測紀錄
+
+最近把 MCP（Model Context Protocol）servers 整合進 Claude Code 工作流程，這是我的測試筆記，記錄哪些有效、哪些有問題，以及哪些值得繼續探索。
 
 ![[Pasted image 20250930140312.png]]
 
-## What Can MCP Actually Do?
+## MCP 能做什麼？
 
-The core idea of MCP is enabling AI to directly connect with external tools and data sources. In theory, it sounds powerful. In practice, there are some interesting limitations and even more interesting possibilities.
+MCP 的核心概念是讓 AI 直接連接外部工具與資料來源。理論上聽起來很強大，實際使用後發現有一些有趣的限制，也有更有趣的可能性。
 
-Here's what I've tested so far:
+以下是我測試過的幾個整合：
 
 ### Chrome DevTools MCP
 
-This one is genuinely useful. Claude can directly analyze web performance, inspect console errors, and capture network requests. No more taking screenshots and pasting them into the conversation.
+這個真的有用。Claude 可以直接分析網頁效能、檢查 console 錯誤、捕捉網路請求，不再需要截圖後貼到對話裡。
 
-**What this enables:**
-- Real-time debugging without context switching
-- Performance analysis with immediate code suggestions
-- Automated accessibility audits
-- Network request inspection for API debugging
+**這讓以下事情成為可能：**
+- 不切換視窗直接 debug
+- 效能分析後立即產出程式碼建議
+- 自動化無障礙稽核
+- 檢查 API debug 的網路請求
 
-The workflow becomes significantly smoother when you can just say "check why this page is slow" and Claude can actually see the performance metrics.
+當你可以直接說「查一下這個頁面為什麼慢」然後 Claude 真的能看到效能數據，工作流程會順暢非常多。
 
-### Figma MCP - Interesting but Limited
+### Figma MCP — 有趣但有限
 
-This is where I spent most of my testing time. The results are mixed but revealing.
+我花最多時間測試這個，結果好壞參半，但很說明問題。
 
-**What works well:**
-- Extracting design tokens (colors, typography, spacing)
-- Basic layout information and component settings
-- Simple structural hierarchies
+**運作良好的部分：**
+- 擷取設計 token（顏色、字型、間距）
+- 基本版面資訊與元件設定
+- 簡單的結構層級
 
-**Where it breaks down:**
-- Complex gradient borders → **completely broken**
-- After investigating, Figma's own export parameters are flawed
-- MCP faithfully passes the incorrect data to Claude
-- Results in CSS styles that don't match the design
+**會壞掉的地方：**
+- 複雜的漸層邊框 → **完全錯誤**
+- 深入調查後發現是 Figma 本身的 export 參數有問題
+- MCP 忠實地把錯誤資料傳給 Claude
+- 導致 CSS 樣式與設計稿不符
 
-This reveals something important: MCP is only as good as the data source. For simple design-to-code conversions, it works. Complex effects still require manual refinement.
+這揭示了一件事：MCP 的品質上限取決於資料來源。簡單的設計轉程式碼可以用，複雜效果還是需要人工細調。
 
-**But the potential is there:** Imagine a custom MCP server that wraps Figma's API with post-processing to fix these known issues, or one that enforces design system constraints before passing data to Claude.
+**但潛力確實存在：** 想像一個自訂的 MCP server，在資料傳給 Claude 之前先後處理、修正這些已知問題，或是強制套用設計系統的約束。
 
-### GitHub MCP - Powerful but Permission-Heavy
+### GitHub MCP — 強大但權限要求高
 
-Direct repository access, issue creation, and PR management from Claude. The integration is smooth.
+從 Claude 直接存取 repo、建 issue、管理 PR，整合流程很順暢。
 
-**Security consideration:**
-The required GitHub token needs full repo access, which means:
-- Read all private repositories
-- Push code
-- Modify settings
+**安全性考量：**
+所需的 GitHub token 需要完整 repo 存取權，這意味著：
+- 讀取所有私人 repo
+- 推送程式碼
+- 修改設定
 
-For personal projects, this is manageable. For company projects, this is a significant security concern. This points to an interesting research direction: could we build a proxy MCP server that implements fine-grained permission control?
+個人專案可以接受。公司專案就是個嚴重的安全隱患。這也指出了一個有趣的研究方向：能不能建一個代理 MCP server，實作細粒度的權限控制？
 
-### Atlassian MCP (Jira/Confluence)
+### Atlassian MCP（Jira／Confluence）
 
-Ticket creation and queries work smoothly. Similar token permission concerns as GitHub.
+建票與查詢都很順暢，token 權限的問題與 GitHub 類似。
 
-**Interesting use case I'm exploring:** Automated documentation updates. When code changes, could we automatically update related Confluence pages? The integration is there; the workflow patterns need refinement.
+**我在探索的有趣用例：** 自動化文件更新。當程式碼變更時，能不能自動更新相關的 Confluence 頁面？整合接口已經有了，工作流程模式還需要打磨。
 
-## Configuration
+## 設定方式
 ```bash
 claude mcp add chrome-devtools npx chrome-devtools-mcp@latest
 ```
@@ -86,140 +94,99 @@ claude mcp add chrome-devtools npx chrome-devtools-mcp@latest
 }
 ```
 
-Note: For Figma, enable "Dev Mode MCP Server" in the desktop app preferences.
+備註：Figma 需要在桌面應用的偏好設定中啟用「Dev Mode MCP Server」。
 
-## What I've Learned
+## 測試後的心得
 
-MCP's direction is right. The current implementation has rough edges, but those edges reveal opportunities.
+MCP 的方向是對的，目前實作還有粗糙的地方，但這些粗糙之處正好揭示了機會。
 
-**Strengths:**
-- Seamless integration reduces context switching
-- Chrome DevTools integration is genuinely productive
-- The protocol itself is extensible and well-designed
-- Opens up entirely new workflows (design → code → deploy → monitor in one conversation)
+**優勢：**
+- 無縫整合減少上下文切換
+- Chrome DevTools 整合確實提升生產力
+- 協定本身設計完善且可擴展
+- 開啟了全新的工作流程（設計 → 程式碼 → 部署 → 監控，在同一個對話裡完成）
 
-**Current limitations:**
-- Third-party data quality varies (Figma gradient issue is just one example)
-- Permission models are coarse-grained
-- No built-in data filtering or compression at the protocol level
-- Token consumption can be significant with large data sources
+**目前的限制：**
+- 第三方資料品質參差不齊（Figma 的漸層問題只是其中一例）
+- 權限模型粒度太粗
+- 協定層面沒有內建資料過濾或壓縮
+- 使用大型資料來源時 token 消耗可觀
 
-## Promising Directions to Explore
+## 值得繼續探索的方向
 
-### 1. Custom MCP Servers
+### 1. 自訂 MCP Servers
 
-The protocol is open. This means we can build specialized servers for:
+協定是開放的，這意味著我們可以為特定場景建立專用 server：
 
-- **Internal design systems:** Pre-processed, validated design data
-- **API documentation:** Context-aware API reference with usage examples
-- **Test databases:** Realistic test data generation based on schema
-- **Build systems:** Real-time build output and error analysis
-- **Analytics platforms:** Connect development decisions to user behavior data
+- **內部設計系統：** 預處理、驗證過的設計資料
+- **API 文件：** 帶有使用範例的情境感知 API 參考
+- **測試資料庫：** 根據 schema 生成真實的測試資料
+- **Build 系統：** 即時 build 輸出與錯誤分析
+- **數據分析平台：** 將開發決策連結到使用者行為數據
 
-The key insight: control the data pipeline, control the quality.
+關鍵洞察：控制資料管道，就控制了品質。
 
-### 2. Intelligent Data Filtering
+### 2. 智慧資料過濾
 
-MCP servers could implement smart filtering strategies:
+MCP server 可以實作聰明的過濾策略：
 
-- Summarize large datasets before sending to Claude
-- Cache frequently requested data
-- Progressive loading (send overview first, details on demand)
-- Schema-aware compression
+- 在送給 Claude 前先摘要大型資料集
+- 快取頻繁請求的資料
+- 漸進式載入（先送概覽，細節按需求載入）
+- 感知 schema 的壓縮
 
-This is particularly relevant for large codebases or extensive design systems.
+對大型 codebase 或龐大設計系統來說尤其重要。
 
-### 3. Workflow Orchestration
+### 3. 工作流程編排
 
-Combining multiple MCP servers enables complex workflows:
+組合多個 MCP server 可以實現複雜流程：
 
-**Example:** Design review automation
-1. Figma MCP → Extract design changes
-2. GitHub MCP → Compare with existing components
-3. Custom component library MCP → Suggest reusable alternatives
-4. Atlassian MCP → Generate design review ticket with comparisons
+**範例：設計審查自動化**
+1. Figma MCP → 擷取設計變更
+2. GitHub MCP → 與現有元件比對
+3. 自訂元件庫 MCP → 建議可重用替代方案
+4. Atlassian MCP → 生成附有比對結果的設計審查票
 
-**Example:** Performance regression detection
-1. GitHub MCP → Detect code changes
-2. Chrome DevTools MCP → Run performance audit
-3. Custom metrics MCP → Compare against baseline
-4. Slack MCP (hypothetical) → Notify team if regression detected
+**範例：效能退化偵測**
+1. GitHub MCP → 偵測程式碼變更
+2. Chrome DevTools MCP → 執行效能稽核
+3. 自訂指標 MCP → 與基準線比對
+4. Slack MCP（假設存在）→ 偵測到退化時通知團隊
 
-### 4. Fine-Grained Security Models
+### 4. 細粒度安全模型
 
-Current token-based authentication is binary. More nuanced approaches:
+目前基於 token 的驗證是全有或全無。更細緻的做法：
 
-- GitHub Apps instead of personal access tokens (limited scope)
-- Proxy MCP servers that implement role-based access
-- Audit logging for all MCP operations
-- Temporary, operation-specific tokens
+- 使用 GitHub Apps 取代個人存取 token（可限制範圍）
+- 代理 MCP server 實作基於角色的存取控制
+- 所有 MCP 操作的稽核日誌
+- 臨時性、操作特定的 token
 
-This would make MCP viable for enterprise environments.
+這樣才能讓 MCP 在企業環境中真正可行。
 
-### 5. Data Quality Layers
+### 5. 資料品質層
 
-For problematic integrations like Figma:
+針對 Figma 這類有問題的整合：
 
-- Build a post-processing MCP proxy
-- Known issues (like gradient borders) get corrected before reaching Claude
-- Enforce design system constraints
-- Validate data against schemas
+- 建立後處理 MCP 代理
+- 已知問題（如漸層邊框）在傳給 Claude 前就先修正
+- 強制套用設計系統約束
+- 根據 schema 驗證資料
 
-Essentially, create a "smart adapter" layer between the raw API and MCP.
+本質上是在原始 API 和 MCP 之間建立一個「智慧轉接層」。
 
-### 6. Domain-Specific Assistants
+## 觀察
 
-MCP enables specialized AI workflows:
+MCP 最有趣的地方不在於個別整合，而在於**可組合性**。每個 MCP server 都在增加脈絡，Claude 可以跨所有來源進行綜合推理。
 
-- **DevOps assistant:** Connects to logs, metrics, deployment systems
-- **Documentation assistant:** Syncs between code, docs, and support tickets
-- **Accessibility assistant:** Combines Chrome DevTools, design files, and WCAG guidelines
-- **Performance assistant:** Links code analysis, runtime metrics, and user impact
+這把問題從「AI 能寫程式嗎？」轉移到「AI 需要什麼脈絡才能做出好決策？」
 
-Each domain benefits from a curated set of MCP servers.
+協定還年輕，那些粗糙的地方（資料品質、token 用量、安全性）都是可以解決的工程問題。核心想法——讓 AI 以結構化方式存取開發者使用的工具——感覺是正確的抽象層次。
 
-## Observations
-
-The most interesting aspect of MCP isn't the individual integrations—it's the **composability**. Each MCP server adds context, and Claude can synthesize across all of them.
-
-This shifts the question from "can AI write code?" to "what context does AI need to make good decisions?"
-
-The protocol is young. The rough edges (data quality, token usage, security) are solvable. The underlying idea—giving AI structured access to the tools developers use—feels like the right abstraction.
-
-I'm particularly curious about:
-- Custom MCP servers for internal tools
-- Workflow orchestration patterns
-- How teams adopt and govern MCP usage
-- What new development patterns emerge when context is unlimited
+我最好奇的是：當脈絡不再是限制，新的開發模式會長什麼樣子。
 
 ![[Pasted image 20250930142154.png]]
 
 ---
 
-*These notes are evolving as I experiment further. If you're exploring MCP, I'd be interested in comparing notes.*
-
-
-
-
-目前 下載的檔案有共同科目
-  作文、英文及中華民國憲法
-
-
-
-  使用方式：
-
-  # 1. 設定 .env
-  CATEGORIES=都市計畫,會計
-
-  # 2. OCR 處理
-  python phase3/scripts/ocr_pdf.py --auto
-
-  # 3. 解析考卷
-  python phase3/scripts/parse_exam.py
-
-  # 4. 建立 chunks
-  python phase4/scripts/create_chunks.py
-
-  # 5. 建立 embeddings
-  python phase4/scripts/create_embeddings.py
-
+*這些筆記會隨著持續實驗而更新。如果你也在探索 MCP，歡迎交流心得。*

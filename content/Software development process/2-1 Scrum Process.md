@@ -1,31 +1,38 @@
-# Scrum Process
+---
+title: "Scrum 流程"
+description: "Scrum 實務實作指南——角色、儀式、Definition of Done，以及常見 Sprint 問題的處理方式"
+tags:
+  - process
+---
 
-## Process Flow
+# Scrum 流程
+
+## 流程圖
 
 ```mermaid
 graph TD
-    Start[PO Creates Requirements] --> CreateBacklog[Product Backlog]
+    Start[PO 建立需求] --> CreateBacklog[Product Backlog]
     CreateBacklog --> Refine[Backlog Refine]
 
-    Refine --> ReadyCheck{Ready?}
-    ReadyCheck -->|No| Clarify[Clarify Requirements]
+    Refine --> ReadyCheck{已就緒?}
+    ReadyCheck -->|否| Clarify[釐清需求]
     Clarify --> Refine
 
-    ReadyCheck -->|Yes| Planning[Sprint Planning]
-    Planning --> Development[Development]
-    Development --> QA[QA Testing]
+    ReadyCheck -->|是| Planning[Sprint Planning]
+    Planning --> Development[開發]
+    Development --> QA[QA 測試]
 
-    QA --> QAPass{Pass?}
-    QAPass -->|No| Development
-    QAPass -->|Yes| POReview[PO Review]
+    QA --> QAPass{通過?}
+    QAPass -->|否| Development
+    QAPass -->|是| POReview[PO Review]
 
-    POReview --> ReviewPass{Pass?}
-    ReviewPass -->|No| Development
-    ReviewPass -->|Yes| Done[Done]
+    POReview --> ReviewPass{通過?}
+    ReviewPass -->|否| Development
+    ReviewPass -->|是| Done[完成]
 
-    Done --> NextSprint{Next Sprint?}
-    NextSprint -->|Yes| Planning
-    NextSprint -->|No| End[Complete]
+    Done --> NextSprint{下一個 Sprint?}
+    NextSprint -->|是| Planning
+    NextSprint -->|否| End[結束]
 
     style Start fill:#ffe5cc
     style Planning fill:#d4f1d4
@@ -34,86 +41,76 @@ graph TD
     style Done fill:#d4f1d4
 ```
 
-## Scrum Roles
+## Scrum 角色
 
-**Product Owner**: Define vision, manage backlog, accept work
-**Developers**: Implement features, self-organize, ensure quality
-**QA**: Test features, identify bugs, ensure requirements met
+**Product Owner**：定義願景、管理 backlog、驗收成果  
+**開發人員**：實作功能、自我組織、確保品質  
+**QA**：測試功能、識別缺陷、確認需求達成
 
-## Scrum Process
+## Scrum 流程
 
 ### 1. Product Backlog
-Product Owner creates user stories with:
-- Description and acceptance criteria
-- Priority and labels
-- Estimated Story Points
-*See [Refinement Process](blog/Software%20development%20process/2-2%20Refinement%20Process.md) for estimation details*
+Product Owner 建立用戶故事，包含：
+- 描述與驗收標準
+- 優先順序與標籤
+- 估算 Story Points  
+*估算細節請見 [Refinement Process](blog/Software%20development%20process/2-2%20Refinement%20Process.md)*
 
 ### 2. Sprint Planning
-**Duration**: 2-4 hours
-**Participants**: PO, Developers, QA
+**時長**：2–4 小時  
+**參與者**：PO、開發人員、QA
 
-**Activities**:
-1. PO explains Sprint goal
-2. Select items from "Ready" backlog
-3. Confirm team capacity
-4. Create Sprint Backlog
+**活動**：
+1. PO 說明 Sprint 目標
+2. 從「已就緒」的 backlog 中選取項目
+3. 確認團隊產能
+4. 建立 Sprint Backlog
 
-### 3. Development
-**Status Flow**: TO DO → In Progress → Ready for Test
+### 3. 開發
+**狀態流**：待辦 → 進行中 → 待測試
 
-**Key Actions**:
-- Write code following standards
-- Update descriptions and screenshots
-- Commit regularly with clear messages
+**重點行動**：
+- 依標準撰寫程式碼
+- 更新描述與截圖
+- 定期提交並附上清楚的 commit 訊息
 
-### 4. QA Testing
-**Activities**: Execute tests, verify requirements, check edge cases
+### 4. QA 測試
+**活動**：執行測試、驗證需求、檢查邊界情況
 
-**Tools**: TestRail, Zephyr, Qase, Jira, Linear
-**E2E**: Playwright, Cypress, Selenium
-**Visual**: Percy, Chromatic, Applitools
+測試工具詳見 [[3-3 Testing and Reviewing]]。
 
-**Pass**: Move to PO Review
-**Fail**: Return to Development with feedback
+**通過**：移至 PO Review  
+**未通過**：附回饋退回開發
 
 ### 5. PO Review
-**Criteria**: Meets requirements, good UX, correct business logic
+**標準**：符合需求、良好使用者體驗、業務邏輯正確
 
-**Pass**: Mark as Done
-**Fail**: Return to Development
+**通過**：標記為完成  
+**未通過**：退回開發
 
-### 6. Done
-**Definition of Done**:
-- Code merged to main
-- All tests passed
-- PO accepted
-- Documentation updated
-- Deployed
+### 6. 完成
+**Definition of Done**：
+- 程式碼已合併至主線
+- 所有測試通過
+- PO 已驗收
+- 文件已更新
+- 已部署
 
-## Scrum Ceremonies
+## Scrum 儀式
 
-### Daily Standup (15 min)
-- What was completed yesterday
-- What is planned today
-- Any blockers
+### 每日站會（15 分鐘）
+- 昨天完成了什麼
+- 今天計劃做什麼
+- 有無阻礙事項
 
 ### Sprint Review
-Demonstrate features, collect feedback, update backlog
+展示功能、收集回饋、更新 backlog
 
-### Sprint Retrospective
-What went well, what needs improvement, action items
+### Sprint 回顧
+哪些做得好、哪些需要改進、行動項目
 
-## Best Practices
+## 常見問題
 
-- **Clear Requirements**: Ensure clarity during refinement
-- **Small Increments**: Split large tasks
-- **Continuous Communication**: Address issues promptly
-- **Fast Feedback**: Test and review early
-- **Continuous Improvement**: Iterate in retrospectives
-
-## Common Issues
-
-**Requirement Changes**: PO evaluates impact, major changes → next Sprint
-**Cannot Complete**: Raise early in standup, adjust scope if needed
-**Urgent Bugs**: Prioritize immediately, non-urgent → backlog
+**需求變更**：PO 評估影響，重大變更 → 移至下一個 Sprint  
+**無法如期完成**：在站會中儘早提出，必要時調整範圍  
+**緊急缺陷**：立即優先處理，非緊急 → 加入 backlog

@@ -1,65 +1,72 @@
+---
+title: "前端系統設計"
+description: "完整的前端架構決策框架——渲染策略、狀態管理、設計模式、元件系統，以及 AI 輔助開發"
+tags:
+  - architecture
+  - process
+---
 
-## Overview
+## 概述
 
-This document outlines the technical decision-making process for frontend projects, covering architecture choices, technology selection, and design patterns.
+以下是選擇前端架構的流程——從渲染策略到狀態管理與元件系統。
 
-## Frontend Project Decision Flow
+## 前端專案決策流程
 
 ```mermaid
 graph TD
-    Start[New Requirements] --> NFRCheck{Cross-team Editing<br/>or SEO Critical?}
+    Start[新需求] --> NFRCheck{跨團隊編輯<br/>或 SEO 關鍵？}
 
-    NFRCheck -->|Yes CMS| CMSChoice[CMS: Strapi/Contentful/Sanity]
-    NFRCheck -->|SEO Only / No CMS| ContentCheck{Content Type?}
+    NFRCheck -->|是 CMS| CMSChoice[CMS: Strapi/Contentful/Sanity]
+    NFRCheck -->|僅 SEO / 無 CMS| ContentCheck{內容類型？}
     CMSChoice --> ContentCheck
 
-    ContentCheck -->|Dynamic + SEO| SSR[SSR: Remix]
-    ContentCheck -->|Static + SEO| SSG[SSG: Astro]
-    ContentCheck -->|Interactive| SPA[SPA: React/Vite]
-    ContentCheck -->|Static/Low Interactive| MPA[MPA: Astro]
+    ContentCheck -->|動態 + SEO| SSR[SSR: Remix]
+    ContentCheck -->|靜態 + SEO| SSG[SSG: Astro]
+    ContentCheck -->|互動性強| SPA[SPA: React/Vite]
+    ContentCheck -->|靜態/低互動| MPA[MPA: Astro]
 
-    SSR --> PlatformTeamCheck{Platform & Team?}
+    SSR --> PlatformTeamCheck{平台與團隊？}
     SSG --> PlatformTeamCheck
     SPA --> PlatformTeamCheck
     MPA --> PlatformTeamCheck
 
-    PlatformTeamCheck -->|Electron/Single| Electron[Electron Desktop App]
-    PlatformTeamCheck -->|Web/Multi-team| MicroFrontend[Micro Frontend]
-    PlatformTeamCheck -->|Web/Single team| MonorepoCheck{Shared Code?}
+    PlatformTeamCheck -->|Electron/單一| Electron[Electron 桌面應用]
+    PlatformTeamCheck -->|Web/多團隊| MicroFrontend[微前端]
+    PlatformTeamCheck -->|Web/單一團隊| MonorepoCheck{是否共用程式碼？}
 
-    Electron --> PackageUI[Package & UI Stack]
+    Electron --> PackageUI[套件與 UI 技術棧]
     MicroFrontend --> PackageUI
-    MonorepoCheck -->|Yes| Monorepo[Monorepo: Turborepo]
-    MonorepoCheck -->|No| MultiRepo[Multi-Repo]
+    MonorepoCheck -->|是| Monorepo[Monorepo: Turborepo]
+    MonorepoCheck -->|否| MultiRepo[Multi-Repo]
 
     Monorepo --> PackageUI
     MultiRepo --> PackageUI
 
-    PackageUI --> Registry[Package Registry]
-    Registry --> ProjectType{Project Type?}
+    PackageUI --> Registry[套件 Registry]
+    Registry --> ProjectType{專案類型？}
 
-    ProjectType -->|Feature-focused| FeatureUI[Headless UI: Radix/shadcn]
-    ProjectType -->|Marketing-focused| MarketingUI[Full UI: Ant Design/Chakra]
+    ProjectType -->|功能導向| FeatureUI[Headless UI: Radix/shadcn]
+    ProjectType -->|行銷導向| MarketingUI[完整 UI: Ant Design/Chakra]
 
-    FeatureUI --> AnimationCheck{Animation Needs?}
+    FeatureUI --> AnimationCheck{動畫需求？}
     MarketingUI --> AnimationCheck
 
-    AnimationCheck -->|Complex Canvas| PixiJS[PixiJS]
-    AnimationCheck -->|UI Animation| Framer[Framer Motion]
-    AnimationCheck -->|Vector| Rive[Rive]
-    AnimationCheck -->|Simple| CSS[CSS/Tailwind]
+    AnimationCheck -->|複雜 Canvas| PixiJS[PixiJS]
+    AnimationCheck -->|UI 動畫| Framer[Framer Motion]
+    AnimationCheck -->|向量| Rive[Rive]
+    AnimationCheck -->|簡單| CSS[CSS/Tailwind]
 
-    PixiJS --> StateCheck{State Complexity?}
+    PixiJS --> StateCheck{狀態複雜度？}
     Framer --> StateCheck
     Rive --> StateCheck
     CSS --> StateCheck
 
-    StateCheck -->|Simple| Context[Context API]
-    StateCheck -->|Medium| Zustand[Zustand]
-    StateCheck -->|Complex| Redux[Redux Toolkit]
-    StateCheck -->|Atomic| Jotai[Jotai/Recoil]
+    StateCheck -->|簡單| Context[Context API]
+    StateCheck -->|中等| Zustand[Zustand]
+    StateCheck -->|複雜| Redux[Redux Toolkit]
+    StateCheck -->|原子式| Jotai[Jotai/Recoil]
 
-    Context --> Complete[Architecture Complete]
+    Context --> Complete[架構完成]
     Zustand --> Complete
     Redux --> Complete
     Jotai --> Complete
@@ -74,221 +81,138 @@ graph TD
     style StateCheck fill:#fff3e0
 ```
 
-## Architecture Decisions
+## 架構決策
 
-### Content Management System (CMS)
+### 內容管理系統（CMS）
 
-**When to Use CMS**:
-- **Cross-team editing requirements**: Marketing, content teams need direct access
-- **SEO-critical content**: Blogs, landing pages, product pages
-- Frequent content updates by non-technical users
-- Multi-language content management
+**何時使用 CMS**：
+- **跨團隊編輯需求**：行銷、內容團隊需要直接存取
+- **SEO 關鍵內容**：部落格、登陸頁、產品頁
+- 非技術人員需頻繁更新內容
+- 多語言內容管理
 
-**CMS Options**:
-- **Strapi**: Open-source, self-hosted, customizable
-- **Contentful**: Cloud-based, powerful API, enterprise-ready
-- **Sanity**: Real-time collaboration, flexible content modeling
+**CMS 選項**：
+- **Strapi**：開源、自架、高度客製化
+- **Contentful**：雲端、強大 API、企業級
+- **Sanity**：即時協作、彈性的內容建模
 
-### Repository Strategy: Monorepo vs Multi-Repo
+### Repository 策略：Monorepo vs Multi-Repo
 
-| Consideration | Monorepo | Multi-Repo |
-|---------------|----------|------------|
-| **Use Case** | Multiple projects sharing components, unified CI/CD | Independent projects, different tech stacks |
-| **Advantages** | Code sharing, atomic changes, unified tooling | Permission isolation, independent deployment, lower learning curve |
-| **Disadvantages** | Long build times, complex permission management | Duplicate dependencies, version inconsistencies |
-| **Tools** | Turborepo, pnpm workspace | Git Submodules, independent repos |
+| 考量點 | Monorepo | Multi-Repo |
+|--------|----------|------------|
+| **使用情境** | 多專案共用元件、統一 CI/CD | 獨立專案、不同技術棧 |
+| **優點** | 程式碼共用、原子性變更、統一工具鏈 | 權限隔離、獨立部署、學習曲線低 |
+| **缺點** | 建置時間長、權限管理複雜 | 依賴重複、版本不一致 |
+| **工具** | Turborepo、pnpm workspace | Git Submodules、獨立 repo |
 
-**When to Use Monorepo**:
-- Shared component library across projects
-- Unified design system
-- Consistent tooling and standards
-- Atomic cross-project changes
+**何時使用 Monorepo**：
+- 跨專案共用元件庫
+- 統一設計系統
+- 一致的工具鏈與規範
+- 跨專案的原子性變更
 
-**When to Use Multi-Repo**:
-- Completely independent projects
-- Different technology stacks
-- Different deployment schedules
-- Strict permission boundaries
+**何時使用 Multi-Repo**：
+- 完全獨立的專案
+- 不同技術棧
+- 不同部署排程
+- 嚴格的權限邊界
 
-### Rendering Strategy
+### 渲染策略
 
-**SPA (Single Page Application)**
-- Rich interactivity, client-side routing
-- Tools: React + React Router, Vite
+| 模式 | 適用情境 | 工具 |
+|------|---------|------|
+| SPA | 豐富互動、客戶端路由 | React + Vite |
+| MPA | 傳統導覽、SEO 友善 | Astro |
+| SSG | 靜態內容、CDN 優化 | Astro、Docusaurus |
+| SSR | 動態內容、即時資料 | Remix |
 
-**MPA (Multi-Page Application)**
-- Traditional navigation, SEO-friendly
-- Tools: Astro, Multi-page frameworks
+### 平台選項
 
-**SSG (Static Site Generation)**
-- Pre-built HTML, CDN-optimized
-- Tools: Astro, Docusaurus
+**Electron**：需要硬體控制（USB、藍牙）、檔案系統存取、或離線優先的桌面應用。跨平台部署（Windows、macOS、Linux）。
 
-**SSR (Server-Side Rendering)**
-- Dynamic content, real-time data
-- Tools: Remix
+### 套件管理
 
-### Platform Options
+**私有 Registry**：
+- npm private packages、GitHub Packages、GitLab Package Registry
+- JFrog Artifactory、Verdaccio
+- 版本控制與原始碼並行管理
 
-**Electron**
-- Desktop applications requiring hardware control
-- File system access, native APIs, system integration
-- Cross-platform deployment (Windows, macOS, Linux)
+**公開 Registry**：
+- npm、yarn、pnpm
+- 語意化版本
+- 開源發布
 
-**When to Use Electron**:
-- Hardware control needs (USB, Bluetooth, Serial ports)
-- Offline-first desktop applications
-- System tray applications
-- Screen capture or recording tools
+### 微前端
 
-### Package Management
+**何時使用**：
+- 多團隊協作的大型應用
+- 獨立部署週期
+- 各團隊技術彈性
 
-**Private Registries**:
-- npm private packages, GitHub Packages, GitLab Package Registry
-- JFrog Artifactory, Verdaccio
-- Version control alongside source code
-
-**Public Registries**:
-- npm, yarn, pnpm
-- Semantic versioning
-- Open-source distribution
-
-### Micro Frontend
-
-**When to Use**:
-- Large-scale applications with multiple teams
-- Independent deployment cycles
-- Technology flexibility across teams
-
-**Approaches**:
-- Single-SPA framework
+**實作方式**：
+- Single-SPA 框架
 - Web Components
-- Iframe integration
+- Iframe 整合
 
-## Technology Selection
+## 技術選型
 
-### Component Strategy
+### 元件策略
 
-**Project Type Determines UI Approach**:
+**專案類型決定 UI 方向**：
 
-**Feature-focused Projects** (Internal tools, dashboards, SaaS):
-- **Headless UI Libraries**: Radix UI, shadcn/ui
-- Maximum flexibility and customization
-- Build design system from primitives
-- Better performance control
+**功能導向專案**（內部工具、儀表板、SaaS）：
+- **Headless UI 函式庫**：Radix UI、shadcn/ui
+- 最大化彈性與客製化
+- 從基礎元件建立設計系統
+- 更好的效能控制
 
-**Marketing-focused Projects** (Landing pages, corporate sites):
-- **Full UI Libraries**: Ant Design, Chakra UI
-- Rapid prototyping and deployment
-- Consistent, polished design out of box
-- Rich component ecosystem
+**行銷導向專案**（登陸頁、企業網站）：
+- **完整 UI 函式庫**：Ant Design、Chakra UI
+- 快速原型與部署
+- 開箱即用的一致設計
+- 豐富元件生態
 
-### Animation Libraries
+動畫工具比較見 [[Web Animation Tools Comparison]]。
 
-**PixiJS**:
-- WebGL-powered 2D rendering
-- Complex canvas animations, games
-- High-performance graphics
+### 狀態管理
 
-**Framer Motion**:
-- Declarative React animations
-- Gesture support, layout animations
-- UI transitions and micro-interactions
+| 方案 | 適用情境 |
+|------|---------|
+| Context API | 主題、認證、語系等簡單全域狀態 |
+| Zustand | 中等複雜度、最少樣板 |
+| Redux Toolkit | 複雜業務邏輯、需時間旅行除錯 |
+| Jotai / Recoil | 原子式狀態、細粒度元件更新 |
 
-**Rive**:
-- Vector animations from design tools
-- Interactive graphics
-- Cross-platform support
+### 資料層
 
-**CSS/Tailwind**:
-- Simple transitions and transforms
-- Lightweight, performant
-- Native browser support
+| 類型 | 工具 | 用途 |
+|------|------|------|
+| Server State | React Query、SWR | 快取、重新驗證、樂觀更新 |
+| Form State | React Hook Form、Formik | 驗證、效能優化 |
+| Router State | React Router、Next.js Router | URL 狀態管理 |
+| Local/UI State | useState、useReducer | 元件層級暫態狀態 |
 
-### State Management
+程式設計典範的選擇（FP vs OOP）見 [[What is Elegant Code]]。
 
-**Context API**:
-- Simple state sharing, built-in solution
-- Theme, auth, locale management
+常用設計模式見 [[Overview of 14 Design Patterns]]。
 
-**Zustand**:
-- Minimal boilerplate, TypeScript support
-- Medium complexity state
+## 元件架構
 
-**Redux Toolkit**:
-- Complex state logic, time-travel debugging
-- Predictable state updates
-
-**Jotai / Recoil**:
-- Atomic state, fine-grained updates
-- Component-level optimization
-
-### Data Layer
-
-**Server State**
-- React Query, SWR
-- Caching, revalidation, optimistic updates
-
-**Form State**
-- React Hook Form, Formik
-- Validation, performance optimization
-
-**Router State**
-- React Router, Next.js Router
-- URL state management
-
-**Local/UI State**
-- useState, useReducer
-- Component-level, transient UI state
-
-## Programming Paradigms
-
-**Functional Programming (FP)**
-- Pure functions, immutability, composition
-- React: Functional components, Hooks
-
-**Object-Oriented Programming (OOP)**
-- Encapsulation, inheritance, polymorphism
-- Use cases: API clients, business logic services
-
-## Design Patterns
-
-**Observer Pattern**
-- Event emitters, pub/sub systems
-- Redux middleware
-
-**Factory Pattern**
-- Component factories, API client creation
-- Configuration builders
-
-**Singleton Pattern**
-- Global instances (store, logger, API client)
-
-**Strategy Pattern**
-- Payment gateways, validation strategies
-- Authentication methods
-
-**Adapter Pattern**
-- API response normalization
-- Third-party integration
-
-## Component Architecture
-
-### Atomic Design Methodology
+### Atomic Design 方法論
 
 ```mermaid
 graph TD
-    Atomic[Atomic Design] --> Atoms[Atoms]
-    Atomic --> Molecules[Molecules]
-    Atomic --> Organisms[Organisms]
-    Atomic --> Templates[Templates]
-    Atomic --> Pages[Pages]
+    Atomic[Atomic Design] --> Atoms[原子 Atoms]
+    Atomic --> Molecules[分子 Molecules]
+    Atomic --> Organisms[有機體 Organisms]
+    Atomic --> Templates[模板 Templates]
+    Atomic --> Pages[頁面 Pages]
 
     Atoms --> AtomEx[Button, Input, Icon, Label]
     Molecules --> MolEx[SearchBar, FormField, Card]
     Organisms --> OrgEx[Header, Form, DataTable]
-    Templates --> TempEx[Page Layouts]
-    Pages --> PageEx[Specific Instances]
+    Templates --> TempEx[頁面版型]
+    Pages --> PageEx[具體實例]
 
     AtomEx --> MolEx
     MolEx --> OrgEx
@@ -302,48 +226,14 @@ graph TD
     style Pages fill:#ffe4e1
 ```
 
-**Atoms**: Button, Input, Label, Icon
-**Molecules**: Search Bar, Form Field, Card
-**Organisms**: Navigation Bar, Data Table, Form
-**Templates**: Page Layouts (Dashboard, Auth)
-**Pages**: Specific Instances (Login, Dashboard)
+測試策略詳見 [[3-3 Testing and Reviewing]]。MCP 整合設定見 [[Claude Code integrate MCP servers]]。
 
-## Testing Strategy Integration
+## 鎖定前的確認清單
 
-### E2E Testing Frameworks
-- **Playwright**: Modern, fast, cross-browser support, visual testing built-in
-- **Cypress**: Developer-friendly, great DX, component testing support
-- **Choice Criteria**: Playwright for cross-browser + visual testing, Cypress for rapid development
-
-### Visual Testing Tools
-- **Percy**: Automated visual reviews, Storybook integration
-- **Chromatic**: Visual testing for Storybook components
-- **Playwright Screenshots**: Built-in visual comparison
-- **Choice Criteria**: Percy for comprehensive visual testing, Chromatic for component-focused workflow
-
-### AI-Powered Development
-
-**MCP (Model Context Protocol) Integration**
-- Connect AI assistants to development tools seamlessly
-- **Version Control**: Direct repository access, PR management, code search
-- **Error Tracking**: Error analysis, performance insights, AI-assisted debugging
-- **Design Tools**: Design token extraction, component generation
-- **Project Management**: Task management, automated status updates
-
-**Benefits**:
-- Context-aware code suggestions
-- Automated documentation generation
-- Intelligent error analysis and resolution
-- Seamless workflow between tools
-
-## Best Practices
-
-- Start simple, add complexity as needed
-- Document major decisions (ADR - Architecture Decision Records)
-- Consider future scale and team growth
-- Evaluate trade-offs systematically
-- Ensure team alignment on technology choices
-- Implement visual regression testing from day one
-- Set up E2E tests for critical user flows
-- Leverage MCP for AI-assisted development workflows
-- Iterative improvement based on feedback
+- 從簡單開始——只有在有具體理由時才增加複雜度
+- 記錄重大決策（ADR - 架構決策記錄），讓未來的隊友了解背後的原因
+- 在開始建置前讓團隊對技術選型達成共識；中途更換架構代價高昂
+- 從第一天起就實施視覺回歸測試
+- 為關鍵使用者流程設置 E2E 測試
+- 善用 MCP 進行 AI 輔助開發工作流程
+- 根據回饋持續迭代改進

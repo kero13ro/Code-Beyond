@@ -1,34 +1,41 @@
-I've always had the habit of writing blog posts in Notion. The instant sync after editing was convenient, but it came with many drawbacks. The constant syncing caused noticeable delays when updating or opening files. Customization options were limited, and there was no support for other AI agents.
+---
+title: "將 Obsidian 自動部署為部落格"
+draft: true
+tags:
+  - tools
+---
 
-For more details, see [[Obsidian vs Notion]]
+我一直有在 Notion 寫 blog 的習慣。編輯後即時同步很方便，但缺點也不少：持續同步造成開啟或更新檔案時明顯延遲，客製化選項有限，也無法整合其他 AI 工具。
 
-Recently, I've been exploring Obsidian, which differs from Notion by being a local, markdown-first tool.
+詳細比較請見 [[Obsidian vs Notion]]
 
-To publish a blog with Obsidian, you could use their official Publish service at $10 USD/month:
+最近我開始探索 Obsidian——它和 Notion 最大的不同，在於本地優先、以 markdown 為核心。
+
+要用 Obsidian 發布 blog，官方提供了 Publish 服務，每月 $10 美元：
 https://obsidian.md/publish
 
-However, as an engineer, I wanted to explore free deployment strategies first.
+不過身為工程師，我想先研究免費部署的方案。
 
-The Obsidian documentation recommends Quartz for deploying static sites. Similar to Docusaurus, Quartz converts markdown files into a multi-page application (MPA) static website with configurable themes, components, and SEO settings—perfect for documentation-oriented sites.
+Obsidian 官方文件推薦使用 Quartz 來部署靜態網站。它類似 Docusaurus，能將 markdown 檔案轉換成多頁應用程式（MPA）靜態網站，支援佈景主題、元件設定與 SEO 配置，非常適合文件導向的站台。
 https://docusaurus.io/
 
-What makes Quartz especially appealing is its native support for Obsidian's core features: bidirectional links, graph view, and the vault directory structure.
+Quartz 最吸引我的地方，是原生支援 Obsidian 的核心功能：雙向連結、圖譜視圖，以及 vault 的目錄結構。
 https://quartz.jzhao.xyz/
 
-Using Quartz has been smooth. You simply edit markdown files in the project's `content` folder, push to GitHub, and the CI/CD pipeline automatically deploys to your site:
+使用 Quartz 的流程相當順暢：只要在專案的 `content` 資料夾中編輯 markdown 檔案，推送至 GitHub，CI/CD pipeline 就會自動部署：
 https://kero13ro.github.io/Code-Beyond/Obsidian-vs-Notion
 
-However, there was one inconvenience: I had to maintain two separate Obsidian windows—one for blog posts and one for personal notes—plus two Claude Code windows for editing different folders.
+但有一個不便之處：我得同時維護兩個 Obsidian 視窗——一個給 blog 文章，一個給個人筆記——以及兩個 Claude Code 視窗分別編輯不同資料夾。
 
-The solution? Automatically deploy from a single Obsidian vault by syncing just the `/blog` folder to GitHub Pages.
+解法是：只從單一 Obsidian vault 自動部署，只需將 `/blog` 資料夾同步至 GitHub Pages 即可。
 
-## Automated Deployment with Raycast
+## 用 Raycast 實現自動部署
 
-I created a shell script with the following workflow:
+我寫了一個 shell script，流程如下：
 
-1. Sync files: Copy content from `/blog` to the Quartz project's `/content` folder
-2. Check for changes
-3. Commit and push to the remote repository
+1. 同步檔案：將 `/blog` 的內容複製到 Quartz 專案的 `/content` 資料夾
+2. 檢查是否有變更
+3. Commit 並推送至遠端 repository
 
-After adding the script to Raycast, I can now update my blog instantly with a single command:
+將 script 加入 Raycast 後，只需一個指令就能即時更新 blog：
 ![[Raycast 2025-10-10 at 16.24.11.png]]

@@ -1,182 +1,189 @@
-# Refinement Process
+---
+title: "Refinement 流程"
+description: "深入解析 backlog refinement——會議結構、技術可行性評估、垂直切片、Story Points 估算與 Definition of Ready"
+tags:
+  - process
+  - architecture
+---
 
-## Overview
+# Refinement 流程
 
-The Refinement Process ensures user stories are thoroughly reviewed and prepared before Sprint Planning.
+## 概覽
 
-## Process Flow
+Refinement 流程確保用戶故事在進入 Sprint Planning 之前經過充分審查與準備。
+
+## 流程圖
 
 ```mermaid
 graph TD
-    A[Product Backlog] --> B[Initial Screening]
-    B --> C[Refinement Session]
+    A[Product Backlog] --> B[初步篩選]
+    B --> C[Refinement 會議]
 
-    C --> D[Technical Feasibility]
-    D --> E{Need PoC?}
-    E -->|Yes| F[Proof of Concept]
+    C --> D[技術可行性評估]
+    D --> E{需要 PoC?}
+    E -->|是| F[Proof of Concept]
     F --> D
-    E -->|No| G[Design Review]
+    E -->|否| G[設計審查]
 
-    G --> H[Specification Check]
-    H --> I{Clear?}
-    I -->|No| C
+    G --> H[規格確認]
+    H --> I{清楚明確?}
+    I -->|否| C
 
-    I -->|Yes| J[Task Breakdown]
-    J --> K[Story Points Estimation]
+    I -->|是| J[任務拆解]
+    J --> K[Story Points 估算]
     K --> L[Definition of Ready]
 
-    L -->|Pass| M[Ready for Sprint]
-    L -->|Fail| C
+    L -->|通過| M[就緒，進入 Sprint]
+    L -->|未通過| C
 
     style A fill:#e3f2fd
     style M fill:#e8f5e9
     style C fill:#fff3e0
 ```
 
-## Refinement Session
+## Refinement 會議
 
-**Duration**: 4-6 hours per Sprint
-**Participants**: PO, Tech Lead, Developers
+**時長**：每個 Sprint 4–6 小時  
+**參與者**：PO、Tech Lead、開發人員
 
-**Agenda**:
-1. Requirement explanation
-2. Technical feasibility assessment
-3. Design assets review
-4. Specification clarification
-5. Task breakdown
-6. Story Points estimation
+**議程**：
+1. 需求說明
+2. 技術可行性評估
+3. 設計資產審查
+4. 規格釐清
+5. 任務拆解
+6. Story Points 估算
 
-## Technical Feasibility
+## 技術可行性
 
-**Evaluation**:
-- Team capability
-- Technical risk
-- Performance impact
-- Dependencies
-- Browser compatibility
+**評估面向**：
+- 團隊技術能力
+- 技術風險
+- 效能影響
+- 相依性
+- 瀏覽器相容性
 
-**Proof of Concept (PoC)**:
-Use when:
-- New/unfamiliar technology
-- High technical uncertainty
-- Performance validation needed
-- Complex third-party integrations
+**Proof of Concept（PoC）**：  
+適用情境：
+- 新技術或不熟悉的技術
+- 技術不確定性高
+- 需要效能驗證
+- 複雜的第三方整合
 
-**PoC Process**: Define questions → Time-box (1-3 days) → Build prototype → Evaluate → Decide
+**PoC 流程**：定義問題 → 時間框 1–3 天 → 建立原型 → 評估 → 決策
 
-## Design Assets Review
+## 設計資產審查
 
-**Checklist**:
-- Design mockups completed
-- Design system components referenced
-- Interactive prototypes (if needed)
-- Specifications documented (spacing, colors, typography)
-- Edge cases and responsive designs covered
+**檢查清單**：
+- 設計稿已完成
+- 已參照設計系統元件
+- 互動原型（如需要）
+- 規格已記錄（間距、顏色、字型）
+- 邊界情況與響應式設計已涵蓋
 
-## Specification Completeness
+## 規格完整性
 
-**Check**:
-- Functional spec (input, output, logic)
-- Interface spec (API endpoints, formats)
-- Design spec (visual, interaction, states)
-- Performance spec (response time, loading)
-- Security spec (validation, encryption)
+**檢查項目**：
+- 功能規格（輸入、輸出、邏輯）
+- 介面規格（API 端點、格式）
+- 設計規格（視覺、互動、狀態）
+- 效能規格（回應時間、載入速度）
+- 安全規格（驗證、加密）
 
-**Red Flags**:
-- Vague terms ("optimize", "improve")
-- No specific metrics
-- Missing success criteria
+**警示訊號**：
+- 模糊描述（「優化」、「改善」）
+- 無具體指標
+- 缺少成功標準
 
-## Task Description
+## 任務描述
 
-### User Story Format
+### 用戶故事格式
 ```
-As a [role]
-I want [feature]
-So that [value]
+身為 [角色]
+我希望 [功能]
+以便 [價值]
 
-Acceptance Criteria:
-- [ ] Criterion 1
-- [ ] Criterion 2
+驗收標準：
+- [ ] 標準 1
+- [ ] 標準 2
 ```
 
-### BDD Format
-For complex logic:
-- **Given**: Initial state
-- **When**: User action
-- **Then**: Expected result
+### BDD 格式
+適用於複雜邏輯：
+- **Given**：初始狀態
+- **When**：用戶操作
+- **Then**：預期結果
 
-## Task Breakdown
+## 任務拆解
 
-**Vertical Slicing** (Recommended):
-Complete feature slice (UI → logic → testing)
+**垂直切片**（建議做法）：  
+完整功能切片（UI → 邏輯 → 測試）
 
-**Benefits**:
-- Independent completion
-- Reduced dependencies
-- Early integration
-- Continuous value delivery
+**優點**：
+- 可獨立完成
+- 減少相依性
+- 提早整合
+- 持續交付價值
 
-**Principles**:
-- Each task < 7 Story Points (ideal 3-5)
-- Each task < 3 days
-- Independently verifiable
-- Logical sequence
+**原則**：
+- 每個任務 < 7 Story Points（理想 3–5）
+- 每個任務 < 3 天
+- 可獨立驗證
+- 具備邏輯順序
 
-## Story Points Estimation
+## Story Points 估算
 
-### What Story Points Reflect
-- **Complexity**: Technical difficulty
-- **Effort**: Time and energy needed
-- **Uncertainty**: Technical risk
+### Story Points 反映什麼
+- **複雜度**：技術難度
+- **工作量**：所需時間與精力
+- **不確定性**：技術風險
 
-**Not precise time** - used for relative comparison
+**不代表精確時間**——用於相對比較
 
-### Point Scale (1, 3, 5, 7, 9)
+### 點數規模
 
-- **1**: Extremely simple (text, style tweak)
-- **3**: Simple (single component, basic form)
-- **5**: Medium (multi-step process)
-- **7**: Complex (complex logic, multiple integrations)
-- **9**: Very complex (recommend splitting)
+| 點數 | 複雜度 | 範例 |
+|------|--------|------|
+| 1 | 極簡單 | 文字修改、樣式調整 |
+| 3 | 簡單 | 單一元件、基本表單 |
+| 5 | 中等 | 多步驟流程 |
+| 7 | 複雜 | 複雜邏輯、多項整合 |
+| 9 | 非常複雜 | 建議拆分 |
 
-### Estimation Process
-1. PO explains requirements
-2. Team discusses approach
-3. Independent assessment
-4. Reveal simultaneously
-5. Discuss differences
-6. Reach consensus
+### 估算流程
+1. PO 說明需求
+2. 團隊討論實作方式
+3. 各自獨立評估
+4. 同時揭露點數
+5. 討論差異
+6. 達成共識
 
-### Team Velocity
-**Definition**: Total Story Points completed per Sprint
+### 團隊速度（Velocity）
+**定義**：每個 Sprint 完成的 Story Points 總計
 
-**Usage**:
-- Capacity planning for next Sprint
-- Track delivery capability
-- Identify bottlenecks
+**用途**：
+- 規劃下個 Sprint 的產能
+- 追蹤交付能力
+- 識別瓶頸
 
-**Note**: New teams need 2-3 Sprints to stabilize
+**注意**：新團隊需要 2–3 個 Sprint 才能穩定
 
 ## Definition of Ready
 
-Tasks must have:
-- [ ] Clear business value
-- [ ] Acceptance criteria defined
-- [ ] Technical feasibility confirmed
-- [ ] Dependencies identified
-- [ ] Story Points estimated
-- [ ] Design mockups (if needed)
-- [ ] API specs (if needed)
-- [ ] Team understands requirements
+任務必須符合：
+- [ ] 具備明確的商業價值
+- [ ] 驗收標準已定義
+- [ ] 技術可行性已確認
+- [ ] 相依性已識別
+- [ ] Story Points 已估算
+- [ ] 設計稿已備妥（如需要）
+- [ ] API 規格已備妥（如需要）
+- [ ] 團隊理解需求
 
-## Non-Functional Requirements
+## 非功能性需求
 
-**Checklist**:
-- Performance: Page load < 3s, interaction < 100ms
-- Security: Input validation, XSS/CSRF protection
-- Accessibility: WCAG 2.1 AA compliance
-- Visual: Regression testing setup
-- E2E: Critical flows identified
-- Browser: Chrome, Firefox, Safari, Edge
-- i18n: Multi-language support (if needed)
+在 Refinement 階段需確認（測試細節見 [[3-3 Testing and Reviewing]]）：
+- 效能：頁面載入 < 3 秒，互動回應 < 100ms
+- 安全：輸入驗證、XSS/CSRF 防護
+- 無障礙：符合 WCAG 2.1 AA
+- i18n：多語系支援（如需要）

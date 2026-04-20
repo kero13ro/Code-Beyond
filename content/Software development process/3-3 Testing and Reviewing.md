@@ -1,71 +1,78 @@
+---
+title: "測試與程式碼審查"
+description: "完整的 QA 策略——單元/整合/E2E 測試、視覺回歸、CI 流水線、程式碼審查清單、部署策略與監控"
+tags:
+  - process
+  - architecture
+---
 
-## Overview
+## 概述
 
-This document outlines the testing and quality assurance process for software development, covering local testing, automated checks, manual review, and CI/CD integration. These practices apply to both frontend and backend development.
+測試發生在每個層級：本地提交前、CI 中，以及審查時的手動測試。涵蓋從單元測試到 E2E、程式碼審查，到正式環境監控的完整流程。
 
-## Testing & QA Flow
+## 測試與 QA 流程
 
 ```mermaid
 graph TD
-    Start[Development Complete] --> UnitTest[Unit Tests]
-    UnitTest --> IntegrationTest[Integration Tests]
-    IntegrationTest --> Coverage{Coverage ≥ 90%?}
-    Coverage -->|No| WriteTests[Write More Tests]
+    Start[開發完成] --> UnitTest[單元測試]
+    UnitTest --> IntegrationTest[整合測試]
+    IntegrationTest --> Coverage{覆蓋率 ≥ 90%？}
+    Coverage -->|否| WriteTests[補寫測試]
     WriteTests --> UnitTest
 
-    Coverage -->|Yes| FrontendCheck{Frontend Project?}
+    Coverage -->|是| FrontendCheck{前端專案？}
 
-    FrontendCheck -->|Yes| PerformanceAnalysis[Performance Analysis]
-    PerformanceAnalysis --> Memory[Memory Profiling]
+    FrontendCheck -->|是| PerformanceAnalysis[效能分析]
+    PerformanceAnalysis --> Memory[記憶體 Profiling]
     PerformanceAnalysis --> WebVitals[Core Web Vitals]
-    PerformanceAnalysis --> BundleSize[Bundle Analysis]
+    PerformanceAnalysis --> BundleSize[Bundle 分析]
 
-    Memory --> VisualVerification[Visual Verification]
+    Memory --> VisualVerification[視覺驗證]
     WebVitals --> VisualVerification
     BundleSize --> VisualVerification
 
-    VisualVerification --> DesignOverlay[Design Overlay]
-    VisualVerification --> CrossBrowser[Cross-Browser Testing]
+    VisualVerification --> DesignOverlay[設計比對]
+    VisualVerification --> CrossBrowser[跨瀏覽器測試]
 
     DesignOverlay --> PreCommit[Pre-commit Hooks]
     CrossBrowser --> PreCommit
 
-    FrontendCheck -->|No| PreCommit
+    FrontendCheck -->|否| PreCommit
 
-    PreCommit --> TypeCheck[Type Check]
+    PreCommit --> TypeCheck[型別檢查]
     TypeCheck --> Lint[Linting]
     Lint --> Format[Formatting]
-    Format --> CommitMsg[Commit Message]
+    Format --> CommitMsg[Commit 訊息]
 
-    CommitMsg --> PrePass{All Pass?}
-    PrePass -->|No| FixIssues[Fix Issues]
+    CommitMsg --> PrePass{全部通過？}
+    PrePass -->|否| FixIssues[修正問題]
     FixIssues --> PreCommit
 
-    PrePass -->|Yes| CreatePR[Create Pull Request]
+    PrePass -->|是| CreatePR[建立 Pull Request]
 
-    CreatePR --> CIBuild[CI: Build & Test]
-    CIBuild --> CICoverage[CI: Coverage Report]
-    CICoverage --> CISecurity[CI: Security Scan]
+    CreatePR --> CIBuild[CI：建置與測試]
+    CIBuild --> CICoverage[CI：覆蓋率報告]
+    CICoverage --> CISecurity[CI：安全掃描]
 
-    CISecurity --> CIPass{CI Pass?}
-    CIPass -->|No| FixCI[Fix CI Issues]
+    CISecurity --> CIPass{CI 通過？}
+    CIPass -->|否| FixCI[修正 CI 問題]
     FixCI --> CIBuild
 
-    CIPass -->|Yes| AIReview[AI-Assisted Review]
-    AIReview --> ManualReview[Manual Review]
+    CIPass -->|是| AIReview[AI 輔助審查]
+    AIReview --> ManualReview[人工審查]
 
-    ManualReview --> ReviewLogic[Business Logic]
-    ReviewLogic --> ReviewArch[Architecture]
-    ReviewArch --> ReviewSecurity[Security]
-    ReviewSecurity --> ReviewPerf[Performance]
+    ManualReview --> ReviewLogic[業務邏輯]
+    ReviewLogic --> ReviewArch[架構設計]
+    ReviewArch --> ReviewSecurity[安全性]
+    ReviewSecurity --> ReviewPerf[效能]
 
-    ReviewPerf --> ReviewPass{Review Pass?}
+    ReviewPerf --> ReviewPass{審查通過？}
 
-    ReviewPass -->|No| Revise[Revise Code]
+    ReviewPass -->|否| Revise[修改程式碼]
     Revise --> CreatePR
 
-    ReviewPass -->|Yes| Deploy[Deploy to Preview/Staging]
-    Deploy --> Complete[Ready for QA Testing]
+    ReviewPass -->|是| Deploy[部署至預覽/測試環境]
+    Deploy --> Complete[準備 QA 測試]
 
     style Start fill:#e3f2fd
     style Complete fill:#e8f5e9
@@ -78,261 +85,127 @@ graph TD
     style VisualVerification fill:#f0f4ff
 ```
 
-## Local Testing
+## 本地測試
 
-### Unit Testing
+### 單元測試
 
-**Frontend Frameworks**:
-- Vitest, Jest
-- Testing Library, React Testing Library
+**前端框架**：Vitest、Jest、Testing Library、React Testing Library
 
-**Backend Frameworks**:
-- pytest (Python)
-- Jest (Node.js)
-- JUnit (Java)
+**後端框架**：pytest（Python）、Jest（Node.js）、JUnit（Java）
 
-**Coverage Target**:
-- ≥ 90% code coverage
-- Focus on critical business logic and edge cases
+**覆蓋率目標**：≥ 90%，聚焦關鍵業務邏輯與邊界案例。
 
-### Integration Testing
+### 整合測試
 
-**Purpose**: Test interactions between components/modules
+**目的**：測試元件/模組之間的互動
 
-**Frontend**:
-- Component integration tests
-- API integration tests (MSW, Nock)
-- E2E testing (Playwright, Cypress)
+**前端**：元件整合測試、API 整合測試（MSW、Nock）、E2E 測試（Playwright、Cypress）
 
-**Backend**:
-- API endpoint testing
-- Database integration tests
-- Service-to-service communication
+**後端**：API 端點測試、資料庫整合測試、服務間通訊
 
-### Performance Analysis
+### 效能分析
 
-**Frontend Performance**:
-- Memory profiling (Chrome DevTools, React DevTools)
-- Core Web Vitals (LCP < 2.5s, FID < 100ms, CLS < 0.1)
-- Bundle analysis (Rollup Visualizer, webpack-bundle-analyzer)
-- Frame rate monitoring
-- Lighthouse CI for automated performance testing
+**前端效能**：
+- 記憶體 Profiling（Chrome DevTools、React DevTools）
+- Core Web Vitals（LCP < 2.5s、FID < 100ms、CLS < 0.1）
+- Bundle 分析（Rollup Visualizer、webpack-bundle-analyzer）
+- Lighthouse CI 自動化效能測試
 
-**Backend Performance**:
-- Response time measurement
-- Database query optimization
-- Load testing (Locust, k6, Artillery)
-- Memory and CPU profiling
+**後端效能**：
+- 回應時間量測、資料庫查詢優化
+- 壓力測試（Locust、k6、Artillery）
 
-### E2E Testing
+### E2E 測試
 
-**Playwright (Recommended)**:
-- Cross-browser testing (Chromium, Firefox, WebKit)
-- Built-in visual comparison
-- Component testing support
-- Parallel execution
-- Tracing and debugging tools
-- Mobile emulation
+**Playwright**（推薦）：跨瀏覽器測試（Chromium、Firefox、WebKit）、內建視覺比對、並行執行、追蹤除錯工具。
 
-**Cypress**:
-- Developer-friendly API
-- Real-time reloading
-- Time-travel debugging
-- Component testing
+**Cypress**：開發者友善的 API、即時重載、時間旅行除錯、元件測試。
 
-**Best Practices**:
-- Test critical user journeys
-- Use data-testid attributes
-- Avoid flaky selectors
-- Run in CI/CD pipeline
-- Parallelize tests for speed
+**最佳實踐**：測試關鍵使用者旅程、使用 data-testid 屬性、避免不穩定的選擇器、在 CI/CD 流水線中執行、並行化測試以加速。
 
-### Visual Testing
+### 視覺測試
 
-**Percy**:
-- Automated visual reviews
-- Storybook integration
-- Responsive testing across viewports
-- Historical comparisons
-- Review workflow with approvals
+**Percy**：自動視覺審查、Storybook 整合、跨視口響應式測試、審查工作流程。
 
-**Chromatic**:
-- Visual testing for Storybook
-- UI component library testing
-- Catches unintended changes
-- Collaboration and review tools
+**Chromatic**：Storybook 元件的視覺測試、抓出非預期的 UI 變更、協作審查工具。
 
-**Playwright Visual Comparisons**:
-- Built-in screenshot testing
-- Pixel-perfect comparisons
-- Update snapshots workflow
-- Cross-browser visual testing
+**Playwright 視覺比對**：內建截圖測試、像素級比對、跨瀏覽器視覺測試。
 
-**Implementation Strategy**:
-- Baseline screenshots for components
-- Visual regression in CI pipeline
-- Review and approve visual changes
-- Integration with PR workflow
+## Pre-commit 檢查
 
-## Pre-commit Checks
+**Husky**：在提交前執行 Git hooks 檢查。
 
-### Husky
+**lint-staged**：只檢查修改過的檔案，加速執行。
 
-Git hooks to run checks before commit
+| 檢查項 | 前端 | 後端 |
+|--------|------|------|
+| 型別檢查 | TypeScript strict mode | mypy |
+| Linting | ESLint | Ruff（Python）、ESLint（Node.js）|
+| Formatting | Prettier | Black（Python）、Prettier（Node.js）|
+| Commit 訊息 | commitlint：`type(scope): description` | 同左 |
 
-### lint-staged
+## CI 流水線
 
-Only check modified files (faster execution)
+### 推送後自動執行
 
-### Automated Checks
+**建置與測試**：運行單元測試、生成覆蓋率報告、驗證建置。
 
-**Type Checking**:
-- Frontend: TypeScript (strict mode, no implicit any)
-- Backend: mypy (Python), TypeScript (Node.js)
+**安全掃描**：
+- 依賴審計（npm audit、pnpm audit）
+- 安全平台（Snyk、Dependabot）
+- SAST 靜態分析（SonarQube、CodeQL）
 
-**Linting**:
-- Frontend: ESLint
-- Backend: Ruff (Python), ESLint (Node.js)
+**視覺與 E2E 測試**：E2E 框架（Playwright、Cypress）、視覺回歸（Percy、Chromatic）、跨瀏覽器測試矩陣。
 
-**Formatting**:
-- Frontend: Prettier
-- Backend: Black (Python), Prettier (Node.js)
+## 人工審查
 
-**Commit Message**:
-- commitlint
-- Format: type(scope): description
-- Types: feat, fix, docs, style, refactor, test, chore
+### 程式碼審查員
 
-## CI Pipeline
+**業務邏輯**：符合使用者故事需求、邊界案例處理（null、錯誤、載入狀態）、資料驗證與錯誤處理。
 
-### Automated Checks on Push
+**安全需求**：
+- 前端：XSS/CSRF 防護、安全資料儲存
+- 後端：認證/授權、輸入驗證、SQL injection 防護
+- 敏感資料處理（加密、安全傳輸）
 
-**Build & Test**
-- Run unit tests
-- Generate coverage report
-- Build verification
+**架構設計**：單一職責、清晰的關注點分離、可維護且可擴展的程式碼結構。
 
-**Security Scan**:
-- Dependency auditing: npm audit, pnpm audit, yarn audit
-- Security platforms: Snyk, Dependabot, WhiteSource
-- CVE vulnerability detection
-- SAST (Static Application Security Testing): SonarQube, CodeQL
+**效能考量**：
+- 前端：避免不必要的重新渲染、優化 Bundle 大小
+- 後端：查詢優化、快取策略、資源管理
 
-**Visual & E2E Tests**:
-- E2E frameworks: Playwright, Cypress, Selenium
-- Visual regression: Percy, Chromatic, Applitools
-- Cross-browser testing matrix
+### AI 輔助審查
 
-## Manual Review
+AI 審查工具比較見 [[AI Code Reviewer Comparison]]。
 
-### Code Reviewer
+## 部署
 
-**Business Logic**:
-- Meets user story requirements
-- Edge case handling (null, error, loading states)
-- Data validation and error handling
+| 環境 | 觸發 | 說明 |
+|------|------|------|
+| 預覽 | PR 建立 | 自動部署，供團隊審查實際實作 |
+| 測試 | 合併至 develop | 正式環境前的最終測試 |
+| 正式 | 合併至 main（手動觸發）| 冒煙測試，備有回滾計畫 |
 
-**Security Requirements**:
-- Frontend: XSS/CSRF protection, secure data storage
-- Backend: Authentication/authorization, input validation, SQL injection prevention
-- Sensitive data handling (encryption, secure transmission)
+監控工具見 [[1-1 Development Lifecycle]]。
 
-**Architecture Design**:
-- Single responsibility principle
-- Clear separation of concerns
-- Maintainable and scalable code structure
+## 真正有效的關鍵習慣
 
-**Performance Considerations**:
-- Frontend: Avoid unnecessary re-renders, optimize bundle size
-- Backend: Query optimization, caching strategy, resource management
+在實踐中，影響最大的習慣是：**並行化 E2E 測試**（回饋速度快 10 倍）、**從第一天起加入視覺回歸**（在使用者發現前抓到細微的 UI 破壞），以及**在審查時使用 MCP** 發現人工審查容易遺漏的問題。其他的都是基本配備。
 
-**Framework Best Practices**:
-- Frontend: React Hooks patterns, component composition
-- Backend: Clean architecture, dependency injection, error handling patterns
-
-### AI-Assisted Review
-
-**Tools**
-- AI code reviewers: Copilot, CodeRabbit, Sourcery, Codium
-- MCP-integrated code analysis
-
-**Capabilities**:
-- Logic optimization suggestions
-- Performance improvements
-- Security vulnerability detection
-- Code style and best practices
-- Automated documentation generation
-
-**MCP Integration Benefits**:
-- Error tracking context: Review code with production error insights
-- Design tool context: Verify implementation matches design specs
-- Project management context: Check task completion criteria
-
-## Deployment
-
-### CD Pipeline
-
-**Preview Environment**
-- Auto-deploy for each Pull Request
-- Team can review actual implementation
-
-**Staging Environment**
-- Auto-deploy after merge to develop branch
-- Final testing before production
-
-**Production Environment**
-- Manual trigger after merge to main branch
-- Smoke testing, rollback plan ready
-
-## Monitoring
-
-**Error Tracking**
-- Error monitoring: Sentry, Rollbar, Bugsnag, Raygun
-- MCP integration for AI-assisted error analysis
-
-**Performance Metrics**
-- Core Web Vitals tracking
-- APM tools: Datadog, New Relic, Grafana, AppDynamics
-- Custom events for business metrics
-- Performance CI: Lighthouse CI, WebPageTest
-
-**Visual Monitoring**
-- Visual regression platforms: Percy, Chromatic, Applitools
-- Build and deployment monitoring
-
-**Alerting**
-- Communication: Slack, Discord, Microsoft Teams
-- Incident management: PagerDuty, Opsgenie, VictorOps
-- On-call rotation and escalation
-
-## Best Practices
-
-- Write tests alongside code (Test-Driven Development)
-- Fix issues early (shift left testing)
-- Implement visual regression testing from day one
-- Cover critical paths with E2E tests
-- Automate everything possible
-- Use MCP for intelligent code reviews and debugging
-- Review thoroughly but efficiently
-- Monitor proactively in production
-- Maintain high test coverage (≥ 80%)
-- Balance speed and quality
-- Parallelize tests for faster feedback
-
-## Testing Pyramid
+## 測試金字塔
 
 ```
        /\
-      /  \     E2E Tests (Few)
-     /____\    - Critical user flows
-    /      \   - Cross-browser
-   /________\  Integration Tests (Some)
-  /          \ - API integration
- /____________\- Component integration
-/              \ Unit Tests (Many)
-                 - Pure functions
-                 - Business logic
+      /  \     E2E 測試（少量）
+     /____\    - 關鍵使用者流程
+    /      \   - 跨瀏覽器
+   /________\  整合測試（適量）
+  /          \ - API 整合
+ /____________\- 元件整合
+/              \ 單元測試（大量）
+                 - 純函數
+                 - 業務邏輯
 ```
 
-**Visual Testing Layer**: Runs across all levels
-**MCP Integration**: Enhances all testing phases with AI insights
+**視覺測試層**：跨所有層級執行
+**MCP 整合**：透過 AI 洞察強化所有測試階段

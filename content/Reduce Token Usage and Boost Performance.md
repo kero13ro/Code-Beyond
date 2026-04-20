@@ -1,26 +1,33 @@
-# Optimizing Claude Code: Reduce Token Usage and Boost Performance
+---
+title: "減少 Token 用量、提升 Claude Code 效能"
+draft: true
+tags:
+  - tools
+---
 
-As a heavy Claude Code user, even with the Max plan, I frequently hit my usage limits. After months of trial and error, I've compiled the most effective strategies to minimize token consumption while maintaining productivity.
+# 優化 Claude Code：減少 Token 用量、提升效能
 
-## Install Essential CLI Tools
+作為重度 Claude Code 使用者，即使訂閱了 Max 方案，我還是頻繁觸碰用量上限。經過幾個月的反覆測試，以下是真正有效的做法。
 
-Claude Code leverages faster CLI tools when available. Installing these can significantly reduce search time and repeated queries.
+## 安裝必要的 CLI 工具
+
+Claude Code 會優先使用更快的 CLI 工具。安裝這些工具能縮短搜尋時間，減少重複查詢。
 
 ```bash
 brew install ripgrep fd bat fzf tree
 ```
 
-|Tool|Purpose|Benefit|
+| 工具 | 用途 | 效益 |
 |---|---|---|
-|`ripgrep`|Fast code search|Claude prefers `rg` over grep|
-|`fd`|Fast file finder|Quicker file lookups|
-|`bat`|Syntax-highlighted cat|Better file previews|
-|`fzf`|Fuzzy finder|Precise file targeting|
-|`tree`|Directory structure|Reduces exploration tokens|
+| `ripgrep` | 快速程式碼搜尋 | Claude 偏好 `rg` 而非 grep |
+| `fd` | 快速檔案搜尋 | 加快檔案定位速度 |
+| `bat` | 帶語法高亮的 cat | 更好的檔案預覽 |
+| `fzf` | 模糊搜尋 | 精準鎖定目標檔案 |
+| `tree` | 顯示目錄結構 | 減少探索目錄所耗的 token |
 
-## Configure .claudeignore
+## 設定 .claudeignore
 
-Create a `.claudeignore` file in your project root to exclude unnecessary files from Claude's context:
+在專案根目錄建立 `.claudeignore`，排除不必要的檔案進入 Claude 的 context：
 
 ```
 node_modules/
@@ -32,9 +39,9 @@ coverage/
 *.lock
 ```
 
-## Leverage CLAUDE.md
+## Use CLAUDE.md for Context
 
-Create a `CLAUDE.md` file in your project root with essential context:
+在專案根目錄建立 `CLAUDE.md`，寫入必要的背景資訊：
 
 ```markdown
 ## Project Overview
@@ -52,13 +59,13 @@ Create a `CLAUDE.md` file in your project root with essential context:
 - Follow existing patterns in src/components
 ```
 
-## Use Compact Mode
+## 使用 Compact 模式
 
-When your conversation grows long, use the `/compact` command to compress history while preserving key context.
+當對話變得很長，使用 `/compact` 指令壓縮歷史紀錄，同時保留關鍵 context。
 
-## Restrict Git Operations
+## 限制 Git 操作
 
-Prevent Claude from executing unwanted git commands by configuring `.claude/settings.json`:
+透過設定 `.claude/settings.json`，防止 Claude 執行不必要的 git 指令：
 
 ```json
 {
@@ -76,21 +83,13 @@ Prevent Claude from executing unwanted git commands by configuring `.claude/sett
 }
 ```
 
-## Best Practices
+## How to Cut Token Usage by 50%
 
-1. **Be specific** - Instead of "optimize this project", say "optimize re-renders in `src/components/GameTable.tsx`"
-2. **Use @ references** - Directly reference files with `@filename` rather than letting Claude search
-3. **Limit tool scope** - Use `--allowedTools` flag for focused sessions
-4. **Batch related tasks** - Group similar operations to maintain context efficiency
-
-## Quick Setup
-
-Run this command to install all recommended tools:
-
-```bash
-brew install ripgrep fd bat fzf tree
-```
+1. **明確指定範圍** — 不要說「優化這個專案」，改說「優化 `src/components/GameTable.tsx` 中的重複渲染」
+2. **使用 @ 引用** — 直接以 `@filename` 指定檔案，而非讓 Claude 自行搜尋
+3. **限制工具範圍** — 用 `--allowedTools` flag 鎖定單一工作情境
+4. **批次相關任務** — 將類似的操作合併處理，維持 context 效率
 
 ---
 
-_Last updated: 2025-01-03_
+_最後更新：2025-01-03_
